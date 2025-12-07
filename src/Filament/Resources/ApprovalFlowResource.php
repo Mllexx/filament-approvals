@@ -19,13 +19,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
+use Filament\Support\Icons\Heroicon;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RingleSoft\LaravelProcessApproval\Models\ProcessApprovalFlow;
+use EightyNine\Approvals\Filament\Resources\ApprovalFlowResource\Schemas\ApprovalFlowForm;
+use EightyNine\Approvals\Filament\Resources\ApprovalFlowResource\Tables\ApprovalFlowTable;
+use Filament\Schemas\Schema;
+use BackedEnum;
+use UnitEnum;
 
 class ApprovalFlowResource extends Resource
 {
     protected static ?string $model = ProcessApprovalFlow::class;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string | UnitEnum | null $navigationGroup = 'Billing';
 
     protected static ?string $modelLabel = 'Approval flow';
 
@@ -60,51 +68,14 @@ class ApprovalFlowResource extends Resource
     {
         return __('filament-approvals::approvals.navigation.plural_label');
     }
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $models = (new ModelScannerService())->getApprovableModels();
-
-        return $form
-            ->columns(12)
-            ->schema([
-                TextInput::make("name")
-                    ->columnSpan(fn($context) => $context === 'create' ? 12 : 6)
-                    ->required(),
-                Select::make('approvable_type')
-                    ->columnSpan(fn($context) => $context === 'create' ? 12 : 6)
-                    ->options(function() use ($models) {
-                        // remove 'App\Models\' from the value of models
-                        $models = array_map(function($model) {
-                            return str_replace('App\Models\\', '', $model);
-                        }, $models);
-                        return $models;
-                    })
-                    ->required(),
-                Forms\Components\Placeholder::make('warning')
-                    ->visible(fn() => empty($models))
-                    ->columnSpanFull()
-                    ->content(new HtmlString('No models in <b>App\Models</b> extend the <b>ApprovableModel</b>. Please see our documentation.'))
-            ]);
+       return ApprovalFlowForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make("name"),
-                TextColumn::make("approvable_type"),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        return ApprovalFlowTable::configure($table);
     }
 
     public static function getRelations(): array

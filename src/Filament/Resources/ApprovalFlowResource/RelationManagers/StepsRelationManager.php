@@ -11,17 +11,18 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Schemas\Schema;
 
 class StepsRelationManager extends RelationManager
 {
     protected static string $relationship = 'steps';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(12)
-            ->schema([
-                Select::make("role_id")
+            ->components([
+                Forms\Components\Select::make("role_id")
                     ->searchable()
                     ->label("Role")
                     ->helperText("Who should approve in this step?")
@@ -35,7 +36,7 @@ class StepsRelationManager extends RelationManager
                         ])->pluck("name", "id"))
                     ->columnSpan(6)
                     ->native(false),
-                Select::make("action")
+                Forms\Components\Select::make("action")
                     ->helperText("What should be done in this step?")
                     ->native(false)
                     ->default("APPROVE")
@@ -45,7 +46,7 @@ class StepsRelationManager extends RelationManager
                         'VERIFY' =>  __('filament-approvals::approvals.actions.verify'),
                         'CHECK' => __('filament-approvals::approvals.actions.check'),
                     ]),
-                TextInput::make('order')
+                Forms\Components\TextInput::make('order')
                     ->label('Order')
                     ->type('number')
                     ->columnSpan(2)
@@ -68,10 +69,13 @@ class StepsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
+                /*
                 Tables\Actions\CreateAction::make()
                     ->icon('heroicon-s-plus')
                     ->label(__('filament-approvals::approvals.actions.add_step')),
+                    */
             ])
+            /*
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -80,6 +84,8 @@ class StepsRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            */
+            ;
     }
 }
