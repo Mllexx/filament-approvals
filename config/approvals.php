@@ -26,7 +26,7 @@ return [
     */
     "navigation" => [
         // Whether to register navigation items for approval flows
-        "should_register_navigation" => true,
+        "should_register_navigation" => false,
         
         // Icon to use in the navigation (Heroicons)
         "icon" => "heroicon-o-clipboard-document-check",
@@ -35,7 +35,7 @@ return [
         "sort" => 1,
         
         // Navigation group (optional)
-        "group" => null,
+        "group" => 'System Management',
         
         // Navigation label (optional, defaults to resource label)
         "label" => null,
